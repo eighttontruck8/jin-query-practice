@@ -391,3 +391,176 @@ EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'지원자 기�
 GO
 
 
+-- 4. CODEFORMATION(CF)
+CREATE TABLE [dbo].[CodeFormation](
+	[IpsiYear] [smallint] NOT NULL,
+	[IpsiGubun] [tinyint] NOT NULL,
+	[OrganizationCode] [varchar](20) NOT NULL,
+	[CourseCode] [varchar](10) NOT NULL,
+	[SubjectCode] [varchar](10) NOT NULL,
+	[OrganizationName] [varchar](90) NULL,
+	[CourseName] [varchar](50) NULL,
+	[SubjectName] [varchar](150) NULL,
+	[VersionCode] [smallint] NULL,
+	[CourseGubun] [char](1) NULL,
+	[IsCourse] [char](1) NULL,
+	[CdIdx] [varchar](10) NULL,
+ CONSTRAINT [PK_CodeFormation] PRIMARY KEY CLUSTERED 
+(
+	[IpsiYear] ASC,
+	[IpsiGubun] ASC,
+	[OrganizationCode] ASC,
+	[CourseCode] ASC,
+	[SubjectCode] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, FILLFACTOR = 85) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+ALTER TABLE [dbo].[CodeFormation]  WITH CHECK ADD  CONSTRAINT [FK_CodeFormation_InfoIpsi] FOREIGN KEY([IpsiYear], [IpsiGubun])
+REFERENCES [dbo].[InfoIpsi] ([IpsiYear], [IpsiGubun])
+GO
+
+ALTER TABLE [dbo].[CodeFormation] CHECK CONSTRAINT [FK_CodeFormation_InfoIpsi]
+GO
+
+-- 5. HSBSUBJECTSCORE(HSS)
+CREATE TABLE [dbo].[HsbSubjectScore](
+	[Idx] [int] IDENTITY(1,1) NOT NULL,
+	[IpsiGubun] [tinyint] NOT NULL,
+	[IpsiYear] [smallint] NOT NULL,
+	[SuhumNo] [varchar](20) NOT NULL,
+	[NEISCode] [char](10) NOT NULL,
+	[Grade] [int] NULL,
+	[Term] [int] NULL,
+	[MemSSN] [varchar](14) NULL,
+	[OrganizationCode] [varchar](30) NULL,
+	[OrganizationName] [varchar](90) NULL,
+	[CourseCode] [varchar](10) NULL,
+	[CourseName] [varchar](60) NULL,
+	[SubjectCode] [varchar](30) NULL,
+	[SubjectName] [varchar](150) NULL,
+	[IsuUnit] [decimal](6, 1) NULL,
+	[Assessment] [varchar](20) NULL,
+	[HsbRank] [smallint] NULL,
+	[StudentCount] [smallint] NULL,
+	[OriginalScore] [int] NULL,
+	[AvgScore] [numeric](4, 1) NULL,
+	[StandardDeviation] [varchar](10) NULL,
+	[RankingGrade] [varchar](10) NULL,
+	[IsDirect] [char](1) NULL,
+	[CrDate] [datetime] NULL,
+	[MdDate] [datetime] NULL,
+	[Year] [char](4) NULL,
+	[IsCalc] [smallint] NULL,
+	[SameRank] [smallint] NULL,
+	[SeqNumber] [smallint] NOT NULL,
+	[RankingScore] [decimal](6, 2) NULL,
+	[StdRankingGrade] [varchar](10) NULL,
+	[RankingGradeCode] [varchar](20) NULL,
+	[Achievement] [varchar](20) NULL,
+	[AchievementCode] [varchar](20) NULL,
+	[IdentifyNumber] [varchar](255) NULL,
+	[AchievementRatio] [varchar](600) NULL,
+	[SubjectSeparationCode] [varchar](10) NULL,
+	[CalcRank] [int] NULL,
+ CONSTRAINT [PK_HsbSubjectScore] PRIMARY KEY CLUSTERED 
+(
+	[Idx] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, FILLFACTOR = 85) ON [PRIMARY],
+ CONSTRAINT [IX_HsbSubjectScore] UNIQUE NONCLUSTERED 
+(
+	[IpsiYear] ASC,
+	[IpsiGubun] ASC,
+	[SuhumNo] ASC,
+	[NEISCode] ASC,
+	[Grade] ASC,
+	[Term] ASC,
+	[OrganizationCode] ASC,
+	[CourseCode] ASC,
+	[SubjectCode] ASC,
+	[Year] ASC
+)WITH (PAD_INDEX = ON, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, FILLFACTOR = 90) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+
+--6. INFOMAJOR(IM)
+CREATE TABLE [dbo].[InfoMajor](
+	[IpsiYear] [smallint] NOT NULL,
+	[IpsiGubun] [tinyint] NOT NULL,
+	[MajorCode] [varchar](10) NOT NULL,
+	[MajorType] [varchar](5) NULL,
+	[MajorName] [varchar](50) NOT NULL,
+	[College] [varchar](5) NULL,
+	[Department] [varchar](5) NOT NULL,
+	[MacYear] [smallint] NOT NULL,
+	[MajorAreaCode] [varchar](10) NOT NULL,
+	[FlagJuYa] [char](1) NULL,
+	[IsUse] [char](1) NOT NULL,
+	[DisplayOrder] [smallint] NULL,
+	[ERPCode] [varchar](20) NULL,
+	[ERPCode1] [varchar](20) NULL,
+	[ERPCode2] [varchar](20) NULL,
+	[etc1] [varchar](50) NULL,
+	[etc2] [varchar](50) NULL,
+	[SubMajorCode] [varchar](10) NULL,
+	[KosafCode] [varchar](20) NULL,
+ CONSTRAINT [PK_InfoMajor] PRIMARY KEY CLUSTERED 
+(
+	[IpsiYear] ASC,
+	[IpsiGubun] ASC,
+	[MajorCode] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, FILLFACTOR = 85) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+ALTER TABLE [dbo].[InfoMajor]  WITH CHECK ADD  CONSTRAINT [FK_InfoMajor_InfoIpsi] FOREIGN KEY([IpsiYear], [IpsiGubun])
+REFERENCES [dbo].[InfoIpsi] ([IpsiYear], [IpsiGubun])
+GO
+
+ALTER TABLE [dbo].[InfoMajor] CHECK CONSTRAINT [FK_InfoMajor_InfoIpsi]
+GO
+
+ALTER TABLE [dbo].[InfoMajor]  WITH CHECK ADD  CONSTRAINT [FK_InfoMajor_InfoMajorArea] FOREIGN KEY([MacYear], [MajorAreaCode])
+REFERENCES [dbo].[InfoMajorArea] ([IpsiYear], [MajorAreaCode])
+GO
+
+ALTER TABLE [dbo].[InfoMajor] CHECK CONSTRAINT [FK_InfoMajor_InfoMajorArea]
+GO
+
+-- 7. INFOMAJORAREA(IMA)
+CREATE TABLE [dbo].[InfoMajorArea](
+	[IpsiYear] [smallint] NOT NULL,
+	[MajorAreaCode] [varchar](10) NOT NULL,
+	[MajorAreaName] [varchar](50) NOT NULL,
+	[MajorType] [varchar](5) NOT NULL,
+	[MaPersonnel] [smallint] NOT NULL,
+	[MaFixedNum] [smallint] NULL,
+	[IsUse] [char](1) NOT NULL,
+	[DisplayOrder] [smallint] NULL,
+	[StdMajorCode] [varchar](20) NULL,
+	[ERPCode] [varchar](20) NULL,
+	[ERPOrder] [int] NULL,
+	[ERPCode2] [varchar](20) NULL,
+	[Bigo1] [varchar](100) NULL,
+	[Bigo2] [varchar](100) NULL,
+	[DtpRegCode] [varchar](20) NULL,
+	[DtpSclCode] [varchar](20) NULL,
+	[CampusID] [varchar](10) NULL,
+	[DptKCUE] [varchar](20) NULL,
+	[DptRegCode] [varchar](20) NULL,
+	[DptSclCode] [varchar](20) NULL,
+	[MajorAreaEngName] [varchar](50) NULL,
+	[MAPERSONNELYA] [smallint] NULL,
+	[MAFIXEDNUMYA] [smallint] NULL,
+	[HAKJE] [varchar](10) NULL,
+ CONSTRAINT [PK_InfoMajorArea] PRIMARY KEY CLUSTERED 
+(
+	[IpsiYear] ASC,
+	[MajorAreaCode] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, FILLFACTOR = 85) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+ALTER TABLE [dbo].[InfoMajorArea] ADD  CONSTRAINT [DF_InfoMajorArea_IsUse]  DEFAULT ('1') FOR [IsUse]
+GO
