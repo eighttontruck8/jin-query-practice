@@ -63,8 +63,8 @@
 
 -- 아래에 쿼리를 작성하세요.
 SELECT STM.IPSIYEAR "입학연도", IPSINAME "모집시기", SELTYPENAME "전형명", MAJORNAME "모집학과", ISNULL(MAJORPERSONNEL,0) "모집인원"
-, AI.지원인원
-, CASE WHEN 모집인원 IS NULL OR 모집인원 = 0 OR 지원인원 = 0 THEN 0 ELSE ROUND(지원인원/모집인원) "경쟁률" 
+, ISNULL(AI.지원인원, 0)
+, CASE WHEN MAJORPERSONNEL IS NULL OR MAJORPERSONNEL = 0 OR AI.지원인원 = 0 THEN 0 ELSE ROUND(AI.지원인원 * 1.0 / MAJORPERSONNEL, 0) END "경쟁률" 
 FROM vwSelectTypeModel STM
 LEFT JOIN
 (
