@@ -23,11 +23,11 @@
     1. 입학연도                    -> "입학연도"
     2. 모집시기명                  -> "모집시기"
     3. 모집단위(학과)명            -> "모집학과"
-    4. 정원내 학과별 모집인원 합계 -> "정원내_모집인원"
+    4. 정원내 전형모델 모집인원 합계 -> "정원내_모집인원"
     5. 정원내 지원인원 합계        -> "정원내_지원인원"
-    6. 정원외 학과별 모집인원 합계 -> "정원외_모집인원"
+    6. 정원외 전형모델 모집인원 합계 -> "정원외_모집인원"
     7. 정원외 지원인원 합계        -> "정원외_지원인원"
-    8. 전체 학과별 모집인원 합계   -> "전체_모집인원"
+    8. 전체 전형모델 모집인원 합계   -> "전체_모집인원"
     9. 전체 지원인원 합계          -> "전체_지원인원"
 
     지원자 집계 및 조인 요구사항
@@ -59,7 +59,9 @@
     주의
     - 실제 컬럼명은 createtable.sql에서 직접 찾으세요.
     - 결과의 한글 별칭은 위에서 지정한 이름과 정확히 맞추세요.
-    - 모집인원은 전형 전체가 아닌 학과별 모집인원을 사용하세요.
+    - 모집인원은 유한대 운영 쿼리와 동일하게 전형모델의 모집인원을 사용하세요.
+    - 계열모집은 같은 전형모델 모집인원이 여러 학과에 표시될 수 있으므로,
+      이 결과의 학과별 모집인원을 다시 학교 전체 합계로 더하지 마세요.
     - 정원내·정원외 조건은 전형코드가 아니라 전형구분 값을 사용하세요.
     - 지원인원이 NULL인 경우 합계에서 빠지지 않도록 0으로 변환하세요.
     - 경쟁률은 계산하지 마세요.
@@ -70,10 +72,10 @@
 -- 아래에 쿼리를 작성하세요.
 SELECT 
 STM.IPSIYEAR 입학연도, STM.IpsiName 모집시기, STM.MAJORNAME 모집학과
-, SUM(CASE WHEN STM.SELTYPEGUBUN = 1 THEN STM.PERSONNEL ELSE 0 END) AS 정원내_모집인원
-, ISNULL(SUM(CASE WHEN STM.SELTYPEGUBUN = 1 THEN AI.지원인원 ELSE 0 END), 0) AS 정원내_지원인원
-, SUM(CASE WHEN STM.SELTYPEGUBUN = 2 THEN STM.PERSONNEL ELSE 0 END) AS 정원외_모집인원 
-, ISNULL(SUM(CASE WHEN STM.SELTYPEGUBUN = 2 THEN AI.지원인원 ELSE 0 END), 0) AS 정원외_지원인원
+, SUM(CASE WHEN STM.SELTYPEGUBUN = '1' THEN STM.PERSONNEL ELSE 0 END) AS 정원내_모집인원
+, ISNULL(SUM(CASE WHEN STM.SELTYPEGUBUN = '1' THEN AI.지원인원 ELSE 0 END), 0) AS 정원내_지원인원
+, SUM(CASE WHEN STM.SELTYPEGUBUN = '2' THEN STM.PERSONNEL ELSE 0 END) AS 정원외_모집인원 
+, ISNULL(SUM(CASE WHEN STM.SELTYPEGUBUN = '2' THEN AI.지원인원 ELSE 0 END), 0) AS 정원외_지원인원
 , SUM(STM.PERSONNEL) 전체_모집인원 
 , ISNULL(SUM(AI.지원인원), 0) 전체_지원인원
 FROM vwSelectTypeModel STM
@@ -84,6 +86,6 @@ LEFT JOIN (
 ) AS AI
 ON STM.IPSIYEAR = AI.IPSIYEAR AND STM.IPSIGUBUN = AI.IpsiGubun AND STM.GUNID = AI.GUNID AND STM.SELTYPECODE = AI.SELTYPECODE AND STM.MajorCode = AI.MAJORCODE 
 WHERE STM.IPSIYEAR = 2024 AND STM.IPSIGUBUN = 1
-GROUP BY STM.IPSIYEAR, STM.IPSINAME, STM.MAJORNAME, STM.MAJORORDER
+GROUP BY STM.IPSIYEAR, STM.IPSINAME, STM.MAJORNAME, STM.MAJORORDER, STM.MAJORCODE
 ORDER BY STM.MajorOrder
 ;
